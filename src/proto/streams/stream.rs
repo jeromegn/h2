@@ -322,7 +322,9 @@ impl Stream {
     }
 
     pub fn wait_send(&mut self, cx: &Context) {
-        self.send_task = Some(cx.waker().clone());
+        if let Some(task) = self.send_task.take() {
+            task.wake();
+        }
     }
 
     pub fn notify_recv(&mut self) {
